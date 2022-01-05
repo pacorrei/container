@@ -1,26 +1,46 @@
-NAME = Container
+MINE = ft_container
 
-CC = clang++ $(CFLAG)
+REAL = std_container
 
-SRCS = main.cpp \
+XX = clang++
 
-OBJS = $(SRCS:.cpp=.o)
+XXFLAGS = -Wall -Werror -Wextra 
 
-CFLAG = -Wall -Wextra -Werror -std=c++98
-all : $(NAME)
+HEADER = -I ./include/
 
-%.o : %.cpp
-	$(CC) -c $< -o $@
+SRCS = main.cpp
 
-$(NAME) : $(OBJS)
-	$(CC) $(OBJS) -o $(NAME)
+MINE_OBJ = $(SRCS:cpp=o)
 
-clean :
-	rm -f $(OBJS)
+REAL_OBJ = std_main.o
 
-fclean : clean
-	rm -f $(NAME)
+VALUE = 0
+$(SET_VALUE):
+		$(VALUE) = 1
+all: $(MINE) $(REAL)
 
-re : fclean all
+$(MINE): $(MINE_OBJ)
+	$(XX) $(XXFLAGS) ${HEADER} -o $(MINE) $(MINE_OBJ)
 
-.PHONY : all clean fclean re
+$(REAL): $(REAL_OBJ)
+	$(XX) $(XXFLAGS) ${HEADER} -o $(REAL) std_main.o
+
+std_main.o:
+	${XX} -D SPACE=std ${XXFLAGS} ${HEADER} -c main.cpp -o std_main.o
+%.o: %.cpp
+ifeq ($(VALUE), 0)
+	${XX} -D SPACE=ft ${XXFLAGS} ${HEADER} -c $< -o $@
+else
+	${XX} -D SPACE=std ${XXFLAGS} ${HEADER} -c $< -o std_main.o
+endif
+
+clean:
+	rm -f $(MINE_OBJ) $(REAL_OBJ)
+
+fclean:
+	rm -f $(MINE_OBJ) $(REAL_OBJ)
+	rm -f $(MINE) $(REAL)
+
+re: fclean all
+
+.PHONY: clean fclean re test norm

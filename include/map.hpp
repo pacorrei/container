@@ -62,7 +62,7 @@ namespace ft
 			_size = 0;
 			_root = _create_node(ft::make_pair(key_type(), mapped_type()));
 			_end = _root;
-			for (InputIterator tmp = first; tmp != last; tmp++;)
+			for (InputIterator tmp = first; tmp != last; tmp++)
 				this->insert(*tmp);
 			
 		}
@@ -75,7 +75,7 @@ namespace ft
 			_alloc = other._alloc;
 			_alloc_node = other._alloc_node;
 			_compare = other._compare;
-			for (iterator tmp = other.begin(); tmp != other.end(); tmp++;)
+			for (iterator tmp = other.begin(); tmp != other.end(); tmp++)
 				this->insert(*tmp);
 			
 		}
@@ -89,11 +89,11 @@ namespace ft
 		{
 			if (*this != other)
 			{
-				this->clear()
+				this->clear();
 				_alloc = other._alloc;
 				_alloc_node = other._alloc_node;
 				_compare = other._compare;
-				for (iterator tmp = other.begin(); tmp != other.end(); tmp++;)
+				for (iterator tmp = other.begin(); tmp != other.end(); tmp++)
 					this->insert(*tmp);
 			}
 			return (*this);
@@ -188,6 +188,7 @@ namespace ft
 		{
 			size_type old_size = _size;
 			bst<value_type>* ret;
+			static_cast<void>(position);
 			ret = _insert(val, _root);
 			if (_root == _end && _size != old_size)
 			{
@@ -481,7 +482,7 @@ namespace ft
 				}
 				else
 				{
-					tmp = node
+					tmp = node;
 					node = node->right;
 				}
 			}

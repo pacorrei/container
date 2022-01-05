@@ -42,14 +42,14 @@ namespace ft
 			return (*this);
 		}
 
-		bool &operator==(const random_access_iterator& other) const
+		bool operator==(const random_access_iterator& other)
 		{
-			return (*this == other);
+			return (this->_it == other._it);
 		}
 
-		bool &operator!=(const random_access_iterator& other) const
+		bool operator!=(const random_access_iterator& other)
 		{
-			return (*this != other);
+			return (this->_it != other._it);
 		}
 
 		reference operator*(void)
@@ -68,7 +68,7 @@ namespace ft
 			return (*this);
 		}
 
-		random_access_iterator &operator++(int)
+		random_access_iterator operator++(int)
 		{
 			random_access_iterator tmp(_it);
 			_it++;
@@ -82,7 +82,7 @@ namespace ft
 			return (*this);
 		}
 
-		random_access_iterator &operator--(int)
+		random_access_iterator operator--(int)
 		{
 			random_access_iterator tmp(_it);
 			_it--;

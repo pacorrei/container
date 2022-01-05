@@ -121,25 +121,26 @@ class vector
 		}
 	}
 
-	vector (const vector &x) : _alloc(x._alloc), _begin(x._begin), _end(x._end), _end_memory(x._end_memory)
+	vector (const vector &x) : _alloc(x._alloc), _end_memory(x._end_memory)
 	{
 		size_type i = 0;
-		pointer tmp = _begin;
-		while (tmp != _end)
+		pointer tmp = x._begin;
+		while (tmp != x._end)
 		{
 			i++;
 			tmp++;
 		}
 		_begin = _alloc.allocate(i);
-		tmp = _begin;
-		while (tmp != _end)
+		_end = _begin;
+		i = 0;
+		for(iterator it = x.begin(); it != x.end(); it++)
 		{
-			_alloc.construct(tmp, *tmp);
-			tmp++;
+				_alloc.construct(_begin + i++, *it);
+				_end++;
 		}
 	}
 
-	~vector(void)
+	virtual ~vector(void)
 	{
 		this->clear();
 		_alloc.deallocate(_begin, this->capacity());
@@ -488,6 +489,7 @@ class vector
 		size_type i = 0;
 		for (size_type size = this->size(); i < size; i++)
 		{
+
 			_end--;
 			_alloc.destroy(_end);
 		}
