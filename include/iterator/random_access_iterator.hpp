@@ -90,16 +90,14 @@ namespace ft
 		}
 
 
-		random_access_iterator &operator+(difference_type n) const
+		random_access_iterator operator+(difference_type n) const
 		{
-			_it + n;
-			return (*this);
+			return random_access_iterator(this->_it + n);
 		}
 
-		random_access_iterator &operator-(difference_type n) const
+		random_access_iterator operator-(difference_type n) const
 		{
-			_it - n;
-			return (*this);
+			return random_access_iterator(this->_it - n);
 		}
 
 
@@ -119,8 +117,6 @@ namespace ft
 		{
 			return (*(_it + n));
 		}
-
-		private:
 
 		pointer _it;
 

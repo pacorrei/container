@@ -121,7 +121,7 @@ class vector
 		}
 	}
 
-	vector (const vector &x) : _alloc(x._alloc), _end_memory(x._end_memory)
+	vector (const vector &x) : _alloc(x._alloc)
 	{
 		size_type i = 0;
 		pointer tmp = x._begin;
@@ -131,6 +131,7 @@ class vector
 			tmp++;
 		}
 		_begin = _alloc.allocate(i);
+		_end_memory = _begin + i;
 		_end = _begin;
 		i = 0;
 		for(iterator it = x.begin(); it != x.end(); it++)
@@ -213,22 +214,23 @@ class vector
 		if (this->capacity() < n)
 		{
 			pointer old_begin = _begin;
+			pointer tmp = _begin;
 			size_type size = this->size();
+			size_type i = 0;
 			size_type capacity = this->capacity();
-
 			_begin = _alloc.allocate(n);
 			_end = _begin;
 			_end_memory = _begin + n;
-
-			while (n != 0)
+			while (i < size)
 			{
 				_alloc.construct(_end, *old_begin);
+				_alloc.destroy(old_begin);
 				_end++;
 				old_begin++;
-				n--;
+				i++;
 			}
 			if (capacity != 0)
-				_alloc.deallocate(old_begin - size, capacity);
+				_alloc.deallocate(tmp, capacity);
 		}
 	}
 
@@ -342,10 +344,12 @@ class vector
 		this->clear();
 		this->reserve(n);
 		size_type i = 0;
+		_end = _begin;
 		while (i != n)
 		{
 			_alloc.construct(_begin + i, val);
 			i++;
+			_end++;
 		}
 	}
 
@@ -353,8 +357,9 @@ class vector
   	void assign (InputIterator first, InputIterator last, typename ft::enable_if<!is_integral<InputIterator>::value>::type* = NULL)
 	{
 		this->clear();
-		size_type i;
+		size_type i = 0;
 		InputIterator tmp = first;
+		_end = _begin;
 		while (tmp != last)
 		{
 			i++;
@@ -367,6 +372,7 @@ class vector
 			_alloc.construct(_begin + i, *first);
 			i++;
 			first++;
+			_end++;
 		}
 	}
 
@@ -419,7 +425,7 @@ class vector
 
 	iterator insert (iterator position, const value_type& val)
 	{
-		size_type index = _begin - position._it;
+		size_type index = position._it - _begin;
 		if (this->size() + 1 > this->capacity())
 			this->reserve(this->size() + 1);
 		this->insert(position, 1, val);
@@ -428,18 +434,22 @@ class vector
 
 	void insert (iterator position, size_type n, const value_type& val)
 	{
-		size_type index = _begin - position._it;
-		if (this->size() + n > this->capacity())
-			this->reserve(this->size() + n);
+		size_type index = position._it - _begin;
+		while (this->size() + n > this->capacity())
+		{
+			if (this->size() == 0)
+				this->reserve(this->size() + n);
+			this->reserve(this->size() * 2);
+		}
 		if (!(this->empty()))
 		{
 			for (size_type i = this->size() - 1; i > index; i--)
 			{
-				_alloc.construct(_begin + i + n, _begin[i]);
+				_alloc.construct(_begin + i + n , _begin[i]);
 				_alloc.destroy(_begin + i);
 			}
 		}
-		for (size_type i = index; i < n; i++)
+		for (size_type i = index; i < n + index; i++)
 		{
 			_alloc.construct(_begin + i, val);
 		}
@@ -450,18 +460,25 @@ class vector
     void insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!is_integral<InputIterator>::value>::type* = NULL)
 	{
 		size_type n = 0;
+		size_type j = 0;
 		InputIterator tmp = first;
 		while (tmp != last)
 		{
 			tmp++;
 			n++;
 		}
-		if (this->size() + n > this->capacity())
-			this->reserve(this->size() + n);
+		while (this->size() + n > this->capacity())
+		{
+			if (this->size() == 0)
+				this->reserve(this->size() + n);
+			this->reserve((this->size() + j) * 2);
+			j++;
+		}
 		n = 0;
 		for (tmp = first; tmp != last; tmp++)
 		{
 			this->insert(position + n, 1, *tmp);
+			std::cout << "test *tmp = " << *tmp << std::endl;
 			n++;
 		}
 	}
