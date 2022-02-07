@@ -18,11 +18,11 @@ namespace ft
 	}
 
 	template <class InputIterator1, class InputIterator2, class BinaryPredicate>
-  	bool equal (InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, BinaryPredicate pred)
+  	bool equal (InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, BinaryPredicate p)
 	{
 		while (first1 != last1)
 		{
-    		if (!(pred(*first1, *first2)))
+    		if (!p(*first1, *first2))
       			return false;
     		++first1;
 			++first2;

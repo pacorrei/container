@@ -35,6 +35,7 @@ namespace ft
 		bst* parent;
 		bst* left;
 		bst* right;
+		int	max_size;
 	};
 
 	template<class T>

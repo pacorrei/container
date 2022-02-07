@@ -61,11 +61,11 @@ class vector
 
 	//random_access_iterator
 
-	typedef  random_access_iterator<T> iterator;
+	typedef  ft::random_access_iterator<T> iterator;
 
 	//const random_access_iterator
 
-	typedef  random_access_iterator<T> const_iterator;
+	typedef  ft::const_random_access_iterator<T> const_iterator;
 
 	typedef  ft::reverse_iterator<iterator> reverse_iterator;
 
@@ -77,18 +77,18 @@ class vector
 	//Default constructors
 
 	explicit vector (const allocator_type& alloc = allocator_type()) :
-	 _alloc(alloc), _begin(NULL), _end(NULL), _end_memory(NULL)
+	 _alloc(alloc), _begin(NULL), _end(NULL), _capacity(0)
 	{}
 
 
 	//Fill constructors
 
 	explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) :
-	_alloc(alloc), _begin(NULL), _end(NULL), _end_memory(NULL)
+	_alloc(alloc), _begin(NULL), _end(NULL), _capacity(0)
 	{
 		_begin = _alloc.allocate(n);
 		_end = _begin;
-		_end_memory = _begin + n;
+		_capacity =  n;
 
 		while (n)
 		{
@@ -112,7 +112,7 @@ class vector
 		tmp = first;
 		_begin = _alloc.allocate(i);
 		_end = _begin;
-		_end_memory = _begin + i;
+		_capacity = i;
 		while (tmp != last)
 		{
 			_alloc.construct(_end, *tmp);
@@ -121,24 +121,42 @@ class vector
 		}
 	}
 
-	vector (const vector &x) : _alloc(x._alloc)
+	vector (const vector &x) : _alloc(x._alloc) 
 	{
-		size_type i = 0;
-		pointer tmp = x._begin;
-		while (tmp != x._end)
-		{
-			i++;
-			tmp++;
-		}
-		_begin = _alloc.allocate(i);
-		_end_memory = _begin + i;
+		this->_begin = NULL;
+		this->_capacity = x.size();
+		if (_capacity)
+			_begin = _alloc.allocate(_capacity);
 		_end = _begin;
-		i = 0;
-		for(iterator it = x.begin(); it != x.end(); it++)
+		size_type i = 0; 
+		for(const_iterator it = x.begin(); it != x.end(); it++)
 		{
 				_alloc.construct(_begin + i++, *it);
 				_end++;
 		}
+	}
+
+	vector& operator= (const vector& x)
+	{
+		if (this == &x)
+			return (*this);
+		
+		this->clear();
+		_alloc.deallocate(_begin, this->capacity());
+		this->_alloc = x._alloc;
+		this->_begin = NULL;
+		if (this->_capacity < x._capacity)
+			this->_capacity = x._capacity;
+		if (_capacity)
+			_begin = _alloc.allocate(_capacity);
+		_end = _begin;
+		size_type i = 0;
+		for(const_iterator it = x.begin(); it != x.end(); it++)
+		{
+				_alloc.construct(_begin + i++, *it);
+				_end++;
+		}
+		return (*this);
 	}
 
 	virtual ~vector(void)
@@ -150,12 +168,12 @@ class vector
 
 	iterator begin(void)
 	{
-		return (_begin);
+		return (iterator(_begin));
 	}
 
 	const_iterator begin(void) const
 	{
-		return (_begin);
+		return (const_iterator(_begin));
 	}
 
 	reverse_iterator rbegin()
@@ -171,15 +189,15 @@ class vector
 	iterator end(void)
 	{
 		if (this->empty())
-			return (_begin);
-		return (_end);
+			return (iterator(_begin));
+		return (iterator(_end));
 	}
 
 	const_iterator end(void) const
 	{
 		if (this->empty())
-			return (_begin);
-		return (_end);
+			return (const_iterator(_begin));
+		return (const_iterator(_end));
 	}
 
 	reverse_iterator rend()
@@ -204,7 +222,7 @@ class vector
 
 	size_type capacity(void) const
 	{
-		return (_end_memory - _begin);
+		return (_capacity);
 	}
 
 	void reserve(size_type n)
@@ -216,11 +234,13 @@ class vector
 			pointer old_begin = _begin;
 			pointer tmp = _begin;
 			size_type size = this->size();
+			if (_begin == NULL)
+				size = 0;
 			size_type i = 0;
 			size_type capacity = this->capacity();
 			_begin = _alloc.allocate(n);
 			_end = _begin;
-			_end_memory = _begin + n;
+			_capacity = n;
 			while (i < size)
 			{
 				_alloc.construct(_end, *old_begin);
@@ -248,7 +268,22 @@ class vector
 			
 		}
 		else
-			this->insert(this->end(), n - this->size(), val);
+		{
+			if (n > _capacity && n < (_capacity * 2))
+			{
+				this->reserve(_capacity * 2);
+			}
+			else if (n > _capacity && n >= (_capacity * 2))
+			{
+				this->reserve(n);
+			}
+			size_type size = this->size();
+			for (size_type i = 0; i < n - size; i++)
+			{
+				_alloc.construct(_begin + size + i, val);
+				_end++;
+			}
+		}
 	}
 
 	bool empty(void) const
@@ -322,12 +357,12 @@ class vector
 
 	void push_back(const value_type & val)
 	{
-		if (_end >= _end_memory)
+		if (this->size() >= _capacity)
 		{
-			if (this->size() > 1)
-				this->reserve(2);
+			if (_capacity == 0)
+				this->reserve(1);
 			else
-				this->reserve(this->size() * 2);
+				this->reserve(_capacity * 2);
 		}
 		_alloc.construct(_end, val);
 		_end++;
@@ -378,11 +413,11 @@ class vector
 
 	iterator erase (iterator position)
 	{
-		if (this->empty() || position == _end)
+		if (this->empty() || position == this->end())
 			return _end;
 		size_type tmp = position._it - _begin;
 		_alloc.destroy(position._it);
-		for (size_type i = tmp; i < _end - 1; i++)
+		for (size_type i = tmp; i < this->size() - 1; i++)
 		{
 			_alloc.construct(_begin + i, _begin[i + 1]);
 			_alloc.destroy(_begin + i + 1);
@@ -393,7 +428,7 @@ class vector
 
 	iterator erase (iterator first, iterator last)
 	{
-		if (this->empty() || first == _end)
+		if (this->empty() || first == this->end())
 			return _end;
 		size_type i = 0;
 		iterator tmp = first;
@@ -404,6 +439,8 @@ class vector
 		}
 		if (i > this->size())
 			return _end;
+		if (i == 0)
+			return last;
 		size_type n = 0;
 		size_type index = first._it - _begin;
 		size_type after_erase = last._it - _begin;
@@ -426,27 +463,30 @@ class vector
 	iterator insert (iterator position, const value_type& val)
 	{
 		size_type index = position._it - _begin;
-		if (this->size() + 1 > this->capacity())
-			this->reserve(this->size() + 1);
 		this->insert(position, 1, val);
 		return (iterator(_begin + index));
 	}
 
 	void insert (iterator position, size_type n, const value_type& val)
 	{
+		if (n == 0)
+			return ;
 		size_type index = position._it - _begin;
-		while (this->size() + n > this->capacity())
+		if (_capacity == 0)
+				this->reserve(1);
+		if (this->size() + n > _capacity)
 		{
-			if (this->size() == 0)
-				this->reserve(this->size() + n);
-			this->reserve(this->size() * 2);
+			if (this->size() * 2 > _capacity + n)
+				this->reserve(this->size() * 2);
+			else
+				this->reserve(_capacity + n);
 		}
 		if (!(this->empty()))
 		{
-			for (size_type i = this->size() - 1; i > index; i--)
+			for (size_type i = this->size(); i > index; i--)
 			{
-				_alloc.construct(_begin + i + n , _begin[i]);
-				_alloc.destroy(_begin + i);
+				_alloc.construct(_begin + i + n - 1, _begin[i - 1]);
+				_alloc.destroy(_begin + i - 1);
 			}
 		}
 		for (size_type i = index; i < n + index; i++)
@@ -460,25 +500,24 @@ class vector
     void insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!is_integral<InputIterator>::value>::type* = NULL)
 	{
 		size_type n = 0;
-		size_type j = 0;
+		size_type index = position._it - _begin;
 		InputIterator tmp = first;
 		while (tmp != last)
 		{
 			tmp++;
 			n++;
 		}
-		while (this->size() + n > this->capacity())
+		while (this->size() + n >= _capacity)
 		{
-			if (this->size() == 0)
-				this->reserve(this->size() + n);
-			this->reserve((this->size() + j) * 2);
-			j++;
+			if (_capacity == 0)
+				this->reserve(1);
+			this->reserve(_capacity * 2);
 		}
 		n = 0;
+		position = iterator(_begin + index);
 		for (tmp = first; tmp != last; tmp++)
 		{
-			this->insert(position + n, 1, *tmp);
-			std::cout << "test *tmp = " << *tmp << std::endl;
+			this->insert(position + n, *tmp);
 			n++;
 		}
 	}
@@ -487,17 +526,17 @@ class vector
 	{
 		pointer tmp_begin = _begin;
 		pointer tmp_end = _end;
-		pointer tmp_end_memory = _end_memory;
+		size_type tmp_capacity = _capacity;
 		allocator_type tmp_alloc = _alloc;
 
 		this->_begin = x._begin;
 		this->_end = x._end;
-		this->_end_memory = x._end_memory;
+		this->_capacity = x._capacity;
 		this->_alloc = x._alloc;
 
 		x._begin = tmp_begin;
 		x._end = tmp_end;
-		x._end_memory = tmp_end_memory;
+		x._capacity = tmp_capacity;
 		x._alloc = tmp_alloc;
 	}
 
@@ -524,7 +563,7 @@ class vector
 	allocator_type	_alloc;
 	pointer			_begin;
 	pointer			_end;
-	pointer			_end_memory;
+	size_type		_capacity;
 
 };
 

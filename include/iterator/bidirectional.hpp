@@ -6,25 +6,34 @@
 
 namespace ft
 {
+
 	template <typename T>
-	class bidirectional : ft::iterator<bidirectional_iterator_tag, T>
+	class bidirectional;
+
+	template <typename T>
+	class Constbidirectional;
+
+
+
+	template <typename T>
+	class bidirectional : public ft::iterator<bidirectional_iterator_tag, T, std::ptrdiff_t, T*, T&>
 	{
 		public:
 
-		typedef typename ft::iterator<ft::bidirectional_iterator_tag, T>::iterator_category		iterator_category;
+		typedef ft::bidirectional_iterator_tag 	iterator_category;
 
-		typedef typename ft::iterator<ft::bidirectional_iterator_tag, T>::value_type			value_type;
+		typedef T 								value_type;
 
-		typedef typename ft::iterator<ft::bidirectional_iterator_tag, T>::difference_type		difference_type;
+		typedef std::ptrdiff_t 					difference_type;
 
-		typedef T*																				pointer;
+		typedef T*								pointer;
 
-		typedef T&																				reference;
+		typedef T&								reference;
 
-		bidirectional()
+		bidirectional() : _node(NULL)
 		{}
 
-		bidirectional(bst<T>* node) : _node(node)
+		bidirectional(bst<value_type>* node) : _node(node)
 		{}
 
 		bidirectional(const bidirectional& src)
@@ -52,14 +61,14 @@ namespace ft
 			return &(this->_node->value);
 		}
 
-		bool operator==(const bidirectional& other)
+		friend bool operator==(const bidirectional& lhs, const bidirectional& rhs)
 		{
-			return (*this == other);
+			return (lhs._node == rhs._node);
 		}
 
-		bool operator!=(const bidirectional& other)
+		friend bool operator!=(const bidirectional& lhs, const bidirectional& rhs)
 		{
-			return (*this != other);
+			return (lhs._node != rhs._node);
 		}
 
 		bidirectional& operator++()
@@ -85,7 +94,90 @@ namespace ft
 			return tmp;
 		}
 
-		private:
+		bst<T>* _node;
+
+	};
+
+
+	template <typename T>
+	class Constbidirectional : public ft::iterator<bidirectional_iterator_tag, T, std::ptrdiff_t, T*, T&>
+	{
+		public:
+
+		typedef ft::bidirectional_iterator_tag 			iterator_category;
+
+		typedef const T 								value_type;
+
+		typedef std::ptrdiff_t 							difference_type;
+
+		typedef const T*								pointer;
+
+		typedef const T&								reference;
+
+		Constbidirectional() : _node(NULL)
+		{}
+
+		Constbidirectional(bst<value_type>* node) : _node(node)
+		{}
+
+		Constbidirectional(Constbidirectional const & src)
+		{
+			*this = src;
+		}
+
+		Constbidirectional(const bidirectional<T> & src) : _node(src._node) {}
+
+		virtual ~Constbidirectional() {}
+
+		Constbidirectional& operator=(Constbidirectional const & rhs)
+		{
+			if (this != &rhs)
+				this->_node = rhs._node;
+			return *this;
+		}
+
+		reference operator*() const
+		{
+			return this->_node->value;
+		}
+
+		pointer operator->() const
+		{
+			return &(this->_node->value);
+		}
+
+		friend bool operator==(const Constbidirectional& lhs, const Constbidirectional& rhs)
+		{
+			return (lhs._node == rhs._node);
+		}
+
+		friend bool operator!=(const Constbidirectional& lhs, const Constbidirectional& rhs)
+		{
+			return (lhs._node != rhs._node);
+		}
+
+		Constbidirectional& operator++()
+		{
+			this->_node = succesor_node(this->_node);
+			return *this;
+		}
+		Constbidirectional operator++(int)
+		{
+			Constbidirectional tmp = *this;
+			*this = this->operator++();
+			return tmp;
+		}
+		Constbidirectional& operator--()
+		{
+			this->_node = predecessor_node(this->_node);
+			return *this;
+		}
+		Constbidirectional operator--(int)
+		{
+			Constbidirectional tmp = *this;
+			*this = this->operator--();
+			return tmp;
+		}
 
 		bst<T>* _node;
 

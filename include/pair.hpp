@@ -14,7 +14,7 @@ namespace ft
 		T1 first;
 		T2 second;
 
-		pair() : first(), second()
+		pair(void): first(first_type()), second(second_type()) 
 		{}
 
 		template<class U, class V>
@@ -26,7 +26,7 @@ namespace ft
 
 		pair& operator= (const pair& pr)
 		{
-			if (this != *pr)
+			if (this != &pr)
 			{
 				first = pr.first;
 				second = pr.second;
