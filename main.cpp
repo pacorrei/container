@@ -12,6 +12,7 @@
 #include <map>
 #include "include/stack.hpp"
 #include <stack>
+#include <sys/time.h>
 
 
 void	test_vector(void)
@@ -331,9 +332,9 @@ void	test_vector(void)
 void	test_stack(void)
 {
 	SPACE::stack<int> one;
-	SPACE::stack<int, SPACE::vector<int>> two;
+	SPACE::stack<int, SPACE::vector<int> > two;
 	SPACE::vector<int> tmp(2, 42);
-	SPACE::stack<int, SPACE::vector<int>> three (tmp);
+	SPACE::stack<int, SPACE::vector<int> > three (tmp);
 
 	std::cout << "------SIZE TEST------" << std::endl;
 
@@ -597,10 +598,188 @@ void	test_map(void)
 		
 }
 
+void	test_time_vector(void)
+{
+	struct timeval time;{};
+	gettimeofday(&time, NULL);
+	time_t ms_before = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	SPACE::vector<int> one;
+
+	gettimeofday(&time, NULL);
+	time_t ms_after = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	std::cout << "Time for default constructor = " << ms_after - ms_before << std::endl;
+
+	gettimeofday(&time, NULL);
+	ms_before = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	SPACE::vector<int> two(10000, 10000);
+
+	gettimeofday(&time, NULL);
+	ms_after = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	std::cout << "Time for fill constructor = " << ms_after - ms_before << std::endl;
+
+	gettimeofday(&time, NULL);
+	ms_before = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	SPACE::vector<int> three(two.begin(), two.end());
+
+	gettimeofday(&time, NULL);
+	ms_after = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	std::cout << "Time for iterator constructor = " << ms_after - ms_before << std::endl;
+
+	gettimeofday(&time, NULL);
+	ms_before = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	SPACE::vector<int> four(one);
+
+	gettimeofday(&time, NULL);
+	ms_after = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	std::cout << "Time for copy constructor = " << ms_after - ms_before << std::endl;
+
+	gettimeofday(&time, NULL);
+	ms_before = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	one = two;
+
+	gettimeofday(&time, NULL);
+	ms_after = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	std::cout << "Time for operator= = " << ms_after - ms_before << std::endl;
+
+
+	gettimeofday(&time, NULL);
+	ms_before = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	for (int i = 0; i != 10000; i++)
+		one.pop_back();
+
+	gettimeofday(&time, NULL);
+	ms_after = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	std::cout << "Time for pop_back = " << ms_after - ms_before << std::endl;
+
+	gettimeofday(&time, NULL);
+	ms_before = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	for (int i = 0; i != 10000; i++)
+		one.push_back(42);
+
+	gettimeofday(&time, NULL);
+	ms_after = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	std::cout << "Time for push_back = " << ms_after - ms_before << std::endl;
+
+	gettimeofday(&time, NULL);
+	ms_before = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	one.assign(1000, 21);
+
+	gettimeofday(&time, NULL);
+	ms_after = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	std::cout << "Time for assign = " << ms_after - ms_before << std::endl;
+
+	gettimeofday(&time, NULL);
+	ms_before = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	//SPACE::vector<int>::iterator it;
+	//it++;
+	//for (int i = 0; i != 1; it++)
+	//	i++;
+	for (int i = 0; i != 1000; i++)
+		one.erase(one.begin());
+	
+
+	gettimeofday(&time, NULL);
+	ms_after = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	std::cout << "Time for erase = " << ms_after - ms_before << std::endl;
+
+	SPACE::vector<int> test(1000, 1);
+	gettimeofday(&time, NULL);
+	ms_before = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	test.erase(test.begin(), test.end());
+
+	gettimeofday(&time, NULL);
+	ms_after = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	std::cout << "Time for iterator erase = " << ms_after - ms_before << std::endl;
+
+	gettimeofday(&time, NULL);
+	ms_before = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	one.insert(one.begin(), 100, 10);
+
+	gettimeofday(&time, NULL);
+	ms_after = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	std::cout << "Time for insert = " << ms_after - ms_before << std::endl;
+
+	SPACE::vector<int> test2(100, 50);
+	gettimeofday(&time, NULL);
+	ms_before = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	one.insert(one.begin(), test2.begin(), test2.end());
+
+	gettimeofday(&time, NULL);
+	ms_after = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	std::cout << "Time for iterator insert = " << ms_after - ms_before << std::endl;
+
+}
+
+void	test_time_map(void)
+{
+	struct timeval time;{};
+	gettimeofday(&time, NULL);
+	time_t ms_before = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	SPACE::map<int, int> one;
+
+	gettimeofday(&time, NULL);
+	time_t ms_after = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	std::cout << "Time for default constructor = " << ms_after - ms_before << std::endl;
+
+	gettimeofday(&time, NULL);
+	ms_before = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	int j = 0;
+	for(int i = 0; i != 1000; i++)
+	{
+		one[j]=j;
+		j++;
+	}
+
+	gettimeofday(&time, NULL);
+	ms_after = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	std::cout << "Time for operator[] = " << ms_after - ms_before << std::endl;
+
+	gettimeofday(&time, NULL);
+	ms_before = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	SPACE::map<int, int> two(one.begin(), one.end());
+
+	gettimeofday(&time, NULL);
+	ms_after = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+
+	std::cout << "Time for iterator constructor = " << ms_after - ms_before << std::endl;
+
+}
+
 int 	main(void)
 {
 	//test_vector();
 	//test_stack();
 	//test_map();
+	//test_time_vector();
+	test_time_map();
 	return 0;
 }
