@@ -7,14 +7,14 @@
 namespace ft
 {
 
-	template <typename T>
+	/*template <typename T>
 
 	std::string convert_string(T ret)
 	{
 		std::ostringstream convert;
 		convert << ret;
 		return (convert.str());
-	}
+	}*/
 
 	template <class T> struct less
 	{

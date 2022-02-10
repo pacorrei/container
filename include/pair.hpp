@@ -24,7 +24,7 @@ namespace ft
 		pair (const first_type& a, const second_type& b) : first(a), second(b)
 		{}
 
-		pair& operator= (const pair& pr)
+		pair& operator=(pair const& pr)
 		{
 			if (this != &pr)
 			{

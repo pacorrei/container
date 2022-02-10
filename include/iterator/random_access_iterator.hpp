@@ -157,11 +157,6 @@ namespace ft
 			return random_access_iterator(this->_it + n);
 		}
 
-		friend random_access_iterator operator+(difference_type n, random_access_iterator & other)
-		{
-			return random_access_iterator(other._it + n);
-		}
-
 		random_access_iterator operator-(difference_type n)
 		{
 			return random_access_iterator(this->_it - n);
@@ -199,6 +194,19 @@ namespace ft
 
 	};
 
+	template<typename T>
+	random_access_iterator<T> operator+(typename random_access_iterator<T>::difference_type n,
+	random_access_iterator<T>& other)
+	{
+		return (random_access_iterator<T>(other._it + n));
+	}
+
+	template<typename T>
+	random_access_iterator<T> operator-(typename random_access_iterator<T>::difference_type n,
+	random_access_iterator<T>& other)
+	{
+		return (random_access_iterator<T>(other._it - n));
+	}
 
 
 
@@ -317,11 +325,6 @@ namespace ft
 			return const_random_access_iterator(this->_it + n);
 		}
 
-		friend const_random_access_iterator operator+(difference_type n, const_random_access_iterator & other)
-		{
-			return const_random_access_iterator(other._it + n);
-		}
-
 		const_random_access_iterator operator-(difference_type n) const
 		{
 			return const_random_access_iterator(this->_it - n);
@@ -358,6 +361,13 @@ namespace ft
 		pointer _it;
 
 	};
+
+	template<typename T>
+	const_random_access_iterator<T> operator-(typename const_random_access_iterator<T>::difference_type n,
+	const_random_access_iterator<T> & other)
+	{
+		return (random_access_iterator<T>(other._it - n));
+	}
 
 }
 

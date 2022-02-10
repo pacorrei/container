@@ -325,32 +325,22 @@ class vector
 
 	reference at(size_type n)
 	{
-		if (this->size() <= n)
+		if (this->size() <= n || n < 0)
 		{
-			std::string error;
-
-			error = "vector::_M_range_check: __n (which is ";
-			error += ft::convert_string(n);
-			error += ") >= this->size() (which is ";
-			error+= ft::convert_string(this->size());
-			error += ")";
-			throw (std::out_of_range(error));
+			std::stringstream error;
+			error << "vector::_M_range_check: __n (which is " << n << ") >= this->size() (which is " << this->size() << ")";
+			throw (std::out_of_range(error.str()));
 		}
 		return (*(_begin + n));
 	}
 
 	const_reference at(size_type n) const
 	{
-		if (this->size() <= n)
+		if (this->size() <= n || n < 0)
 		{
-			std::string error;
-
-			error = "vector::_M_range_check: __n (which is ";
-			error += ft::convert_string(n);
-			error += ") >= this->size() (which is ";
-			error+= ft::convert_string(this->size());
-			error += ")";
-			throw (std::out_of_range(error));
+			std::stringstream error;
+			error << "vector::_M_range_check: __n (which is " << n << ") >= this->size() (which is " << this->size() << ")";
+			throw (std::out_of_range(error.str()));
 		}
 		return (*(_begin + n));
 	}
@@ -499,7 +489,7 @@ class vector
 	template <class InputIterator>
     void insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!is_integral<InputIterator>::value>::type* = NULL)
 	{
-		size_type n = 0;
+		/*size_type n = 0;
 		size_type index = position._it - _begin;
 		InputIterator tmp = first;
 		while (tmp != last)
@@ -517,9 +507,42 @@ class vector
 		position = iterator(_begin + index);
 		for (tmp = first; tmp != last; tmp++)
 		{
-			this->insert(position + n, *tmp);
+			this->insert(position + n, 1, *tmp);
+			n++;
+		}*/
+
+		size_type n = 0;
+		size_type index = position._it - _begin;
+		InputIterator tmp = first;
+		while (tmp != last)
+		{
+			tmp++;
 			n++;
 		}
+		if (_capacity == 0)
+				this->reserve(1);
+		if (this->size() + n > _capacity)
+		{
+			if (this->size() * 2 > _capacity + n)
+				this->reserve(this->size() * 2);
+			else
+				this->reserve(_capacity + n);
+		}
+		if (!(this->empty()))
+		{
+			for (size_type i = this->size(); i > index; i--)
+			{
+				_alloc.construct(_begin + i + n - 1, _begin[i - 1]);
+				_alloc.destroy(_begin + i - 1);
+			}
+		}
+		tmp = first;
+		for (size_type i = index; i < n + index; i++)
+		{
+			_alloc.construct(_begin + i, *tmp);
+			tmp++;
+		}
+		_end += n;
 	}
 
 	void swap(vector & x)

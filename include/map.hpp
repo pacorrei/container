@@ -449,13 +449,6 @@ namespace ft
 					tmp = node->left;
 				else
 					tmp = node->right;
-			/*	if (node != _root)
-				{
-					if (node->parent->right == node)
-						node->parent->right = tmp;
-					else
-						node->parent->left = tmp;
-				}*/
 				tmp->parent = node->parent;
 				if (node == _root)
 					_root = tmp;

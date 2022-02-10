@@ -4,7 +4,7 @@ REAL = std_container
 
 XX = clang++
 
-XXFLAGS = -Wall -Werror -Wextra -fsanitize=address -g3
+XXFLAGS = -Wall -Werror -Wextra -std=c++98 -fsanitize=address -g3
 
 HEADER = -I ./include/
 

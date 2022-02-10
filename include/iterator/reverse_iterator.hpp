@@ -132,7 +132,15 @@ namespace ft
 	template <class Iterator, class Iterator2>
 	bool operator== (const reverse_iterator<Iterator> &lhs, const reverse_iterator<Iterator2> &rhs)
 	{
-		if (lhs._it == rhs._it)
+		if (lhs.base() == rhs.base())
+			return (true);
+		return (false);
+	}
+
+	template <class Iterator>
+	bool operator== (const reverse_iterator<Iterator> &lhs, const reverse_iterator<Iterator> &rhs)
+	{
+		if (lhs.base() == rhs.base())
 			return (true);
 		return (false);
 	}
@@ -140,7 +148,15 @@ namespace ft
 	template <class Iterator, class Iterator2>
 	bool operator!= (const reverse_iterator<Iterator> &lhs, const reverse_iterator<Iterator2> &rhs)
 	{
-		if (lhs._it != rhs._it)
+		if (lhs.base() != rhs.base())
+			return (true);
+		return (false);
+	}
+
+	template <class Iterator>
+	bool operator!= (const reverse_iterator<Iterator> &lhs, const reverse_iterator<Iterator> &rhs)
+	{
+		if (lhs.base() != rhs.base())
 			return (true);
 		return (false);
 	}
@@ -148,7 +164,7 @@ namespace ft
 	template <class Iterator, class Iterator2>
 	bool operator<(const reverse_iterator<Iterator> &lhs, const reverse_iterator<Iterator2> &rhs)
 	{
-		if (lhs._it > rhs._it)
+		if (lhs.base() > rhs.base())
 			return (true);
 		return (false);
 	}
@@ -156,7 +172,7 @@ namespace ft
 	template <class Iterator, class Iterator2>
 	bool operator>(const reverse_iterator<Iterator> &lhs, const reverse_iterator<Iterator2> &rhs)
 	{
-		if (lhs._it < rhs._it)
+		if (lhs.base() < rhs.base())
 			return (true);
 		return (false);
 	}
@@ -164,7 +180,7 @@ namespace ft
 	template <class Iterator, class Iterator2>
 	bool operator<=(const reverse_iterator<Iterator> &lhs, const reverse_iterator<Iterator2> &rhs)
 	{
-		if (lhs._it >= rhs._it)
+		if (lhs.base() >= rhs.base())
 			return (true);
 		return (false);
 	}
@@ -172,7 +188,7 @@ namespace ft
 	template <class Iterator, class Iterator2>
 	bool operator>=(const reverse_iterator<Iterator> &lhs, const reverse_iterator<Iterator2> &rhs)
 	{
-		if (lhs._it <= rhs._it)
+		if (lhs.base() <= rhs.base())
 			return (true);
 		return (false);
 	}

@@ -61,14 +61,14 @@ namespace ft
 			return &(this->_node->value);
 		}
 
-		friend bool operator==(const bidirectional& lhs, const bidirectional& rhs)
+		bool operator==(const bidirectional& lhs)
 		{
-			return (lhs._node == rhs._node);
+			return (this->_node == lhs._node);
 		}
 
-		friend bool operator!=(const bidirectional& lhs, const bidirectional& rhs)
+		bool operator!=(const bidirectional& lhs)
 		{
-			return (lhs._node != rhs._node);
+			return (this->_node != lhs._node);
 		}
 
 		bidirectional& operator++()
@@ -97,6 +97,18 @@ namespace ft
 		bst<T>* _node;
 
 	};
+
+	template<class Iterator, class Iterator2>
+	bool operator==(const bidirectional<Iterator>& lhs, const bidirectional<Iterator2>& rhs)
+	{
+		return (lhs._node == rhs._node);
+	}
+
+	template<class Iterator, class Iterator2>
+	bool operator!=(const bidirectional<Iterator>& lhs, const bidirectional<Iterator2>& rhs)
+	{
+		return (lhs._node != rhs._node);
+	}
 
 
 	template <typename T>
@@ -146,14 +158,14 @@ namespace ft
 			return &(this->_node->value);
 		}
 
-		friend bool operator==(const Constbidirectional& lhs, const Constbidirectional& rhs)
+		bool operator==(const Constbidirectional& lhs)
 		{
-			return (lhs._node == rhs._node);
+			return (this->_node == lhs._node);
 		}
 
-		friend bool operator!=(const Constbidirectional& lhs, const Constbidirectional& rhs)
+		bool operator!=(const Constbidirectional& lhs)
 		{
-			return (lhs._node != rhs._node);
+			return (this->_node != lhs._node);
 		}
 
 		Constbidirectional& operator++()
@@ -182,6 +194,18 @@ namespace ft
 		bst<T>* _node;
 
 	};
+
+	template<class Iterator, class Iterator2>
+	bool operator==(const Constbidirectional<Iterator>& lhs, const Constbidirectional<Iterator2>& rhs)
+	{
+		return (lhs._node == rhs._node);
+	}
+
+	template<class Iterator, class Iterator2>
+	bool operator!=(const Constbidirectional<Iterator>& lhs, const Constbidirectional<Iterator2>& rhs)
+	{
+		return (lhs._node != rhs._node);
+	}
 }
 
 #endif
